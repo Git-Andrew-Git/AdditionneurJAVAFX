@@ -2,10 +2,11 @@ package fr.andrew.additioneurjavafx;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -25,6 +26,7 @@ public class HelloApplication extends Application {
 
         VBox vBox = new VBox();
 
+
         Label label = new Label();
         vBox.getChildren().add(label);
 
@@ -32,6 +34,7 @@ public class HelloApplication extends Application {
         vBox.getChildren().add(textArea);
         textArea.setPrefRowCount(10);
         textArea.setWrapText(true);
+        textArea.setEditable(false);
 
         HBox hBox1 = new HBox();
         vBox.getChildren().add(hBox1);
@@ -79,20 +82,37 @@ public class HelloApplication extends Application {
                 label.setText("Please enter some numbers");
                 return;
             }
-            text.replace('=', '+');
+//            text.replace('=', '+');
             String[] elements = text.split("\\+");
             int somme  = 0;
 
-            for (String element : elements) {
-                String trimmed = element.trim();
-
+            for (String part : elements) {
+                String trimmed = part.trim();
+                if (!trimmed.isEmpty()) {
+                    try {
                         somme += Integer.parseInt(trimmed);
-
+                    } catch (NumberFormatException e) {
+                        continue;
+                    }
+                }
             }
             textArea.appendText("="+somme + "+");
 
         });
         Button buttonValider = new Button("Valider");
+
+
+        buttonValider.setOnAction(actionEvent -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Supprimer Calculations ?");
+            alert.setHeaderText("You are trying to delete all your calculations!");
+            alert.setContentText("Do you want to delete all your calculations?");
+
+                if (alert.showAndWait().get() == ButtonType.OK) {
+                    textArea.setText("");
+                }
+            
+        });
 
         vBox1.getChildren().addAll(button0, button1);
         vBox2.getChildren().addAll(button2, button3);
@@ -102,7 +122,35 @@ public class HelloApplication extends Application {
 
         hBox2.getChildren().addAll(buttonValider, buttonCalculer);
 
-        Scene scene = new Scene(vBox);
+        BorderPane borderPane = new BorderPane();
+        borderPane.setCenter(vBox);
+        BorderPane.setMargin(vBox, new Insets(10));
+
+        VBox.setMargin(label, new Insets(5));
+        VBox.setMargin(textArea, new Insets(5));
+        VBox.setMargin(hBox1, new Insets(5));
+        VBox.setMargin(hBox2, new Insets(5));
+
+        HBox.setMargin(vBox1, new Insets(5));
+        HBox.setMargin(vBox2, new Insets(5));
+        HBox.setMargin(vBox3, new Insets(5));
+        HBox.setMargin(vBox4, new Insets(5));
+        HBox.setMargin(vBox5, new Insets(5));
+
+        hBox1.setAlignment(Pos.CENTER);
+        hBox2.setAlignment(Pos.CENTER);
+
+        hBox1.setSpacing(3);
+        hBox2.setSpacing(24);
+
+        vBox1.setSpacing(5);
+        vBox2.setSpacing(5);
+        vBox3.setSpacing(5);
+        vBox4.setSpacing(5);
+        vBox5.setSpacing(5);
+
+
+        Scene scene = new Scene(borderPane);
         stage.setTitle("Additioneur");
         stage.setScene(scene);
         stage.show();
